@@ -52,7 +52,8 @@ $ php artisan migrate
 ### tambahkan pada resources/assets/js/routes/routes.js
 
 ```javascript
-{
+...authGuard([
+   {
       path: '/admin',
       name: 'admin',
       redirect: '/admin/dashboard',
