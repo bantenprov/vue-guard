@@ -41,9 +41,11 @@
               <button class="btn btn-info btn-sm" role="button" @click="viewRow(props.rowData)">
                 <span class="fa fa-eye"></span>
               </button>
+              <!--
               <button class="btn btn-warning btn-sm" role="button" @click="editRow(props.rowData)">
                 <span class="fa fa-pencil"></span>
               </button>
+              -->
               <button class="btn btn-danger btn-sm" role="button" @click="deleteRow(props.rowData)">
                 <span class="fa fa-trash"></span>
               </button>
