@@ -22,7 +22,7 @@
             "src/helpers/helpers.php"
         ],
         "psr-4": {
-            "Bantenprov\\Vueguard\\": "src"
+            "Bantenprov\\VueGuard\\": "src"
         }
     },
     "minimum-stability": "dev"
