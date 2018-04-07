@@ -9,6 +9,7 @@ use Bantenprov\VueGuard\Console\Commands\VueGuardCommand;
  * @package Bantenprov\VueGuard
  * @author  bantenprov <developer.bantenprov@gmail.com>
  */
+
 class VueGuardServiceProvider extends ServiceProvider
 {
 
