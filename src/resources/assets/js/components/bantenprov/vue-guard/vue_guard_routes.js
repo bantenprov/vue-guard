@@ -43,8 +43,19 @@ let vue_guard_routes = [
 		meta: {
 			title: "Guard"
         }
+    },
+    {
+		path: '/admin/workflow/guard/:id/edit',
+		components: {
+			main: resolve => require(['../../../components/bantenprov/vue-guard/vue_guard.edit.vue'], resolve),
+			navbar: resolve => require(['../../../components/Navbar.vue'], resolve),
+			sidebar: resolve => require(['../../../components/Sidebar.vue'], resolve)
+		},
+		meta: {
+			title: "Guard"
+        }
     }
-    
+
 ];
 
 vue_guard_routes.forEach((route,index)=>{

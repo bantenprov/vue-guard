@@ -17,29 +17,39 @@ use Validator;
  */
 class VueGuardController extends Controller
 {
+
     protected $vueGuard;
     protected $workflow;
     protected $transition;
     protected $permission;
-    
-    
-    //[Function] __construct
+
+
+    /**
+     * VueGuardController constructor.
+     * @param VueGuardModel $vueGuard
+     * @param Workflow $workflow
+     * @param Transition $transition
+     * @param Permission $permission
+     */
     public function __construct(VueGuardModel $vueGuard, Workflow $workflow, Transition $transition, Permission $permission){
         $this->vueGuard     = $vueGuard;
         $this->workflow     = $workflow;
         $this->transition   = $transition;
         $this->permission   = $permission;
     }
-    
+
 
     public function demo()
-    {        
+    {
         return VueGuard::welcome();
     }
 
-    //[Function] index
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(Request $request){
-        
+
         if (request()->has('sort')) {
             list($sortCol, $sortDir) = explode('|', request()->sort);
 
@@ -58,21 +68,25 @@ class VueGuardController extends Controller
 
         $perPage = request()->has('per_page') ? (int) request()->per_page : null;
         $response = $query->paginate($perPage);
-        
-        foreach($response as $guard){            
-            
+
+        foreach($response as $guard){
+
             array_set($guard, 'workflow_label', $guard->workflow->label);
             array_set($guard, 'permission_name', $guard->permission->display_name);
             array_set($guard, 'transition_label', $guard->transition->label);
         }
 
         return response()->json($response);
+
     }
 
-    //[Function] show
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show($id){
         $check = $this->vueGuard->find($id)->count();
-        
+
         if($check > 0){
             $response = $this->vueGuard->findOrFail($id);
             $response['workflow']   = $response->workflow;
@@ -85,11 +99,40 @@ class VueGuardController extends Controller
             $response['permission'] = '';
             $response['status'] = true;
         }
-        
+
         return response()->json($response);
     }
 
-    //[Function] create
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function edit($id){
+        $check = $this->vueGuard->find($id)->count();
+
+        if($check > 0){
+            $response = $this->vueGuard->findOrFail($id);
+            $response['workflow']   = $response->workflow;
+            $response['transition'] = $response->transition;
+
+            array_add($response->permission, 'label', $response->permission->display_name);
+            $response['permission'] = $response->permission;
+
+            $response['status'] = true;
+        }else{
+            $response['workflow']   = '';
+            $response['transition'] = '';
+            $response['permission'] = '';
+            $response['status'] = true;
+        }
+
+        return response()->json($response);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function create(Request $request){
         $workflows   = $this->workflow->all();
         $transitions = $this->transition->all();
@@ -105,10 +148,13 @@ class VueGuardController extends Controller
 
         return response()->json($response);
     }
-    
 
-    //[Function] store
-    public function store(Request $request){        
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(Request $request){
 
         $validator = Validator::make($request->all(),[
             'workflow_id'   => 'required',
@@ -124,7 +170,7 @@ class VueGuardController extends Controller
         }else{
             $response['message']    = 'add guard success';
             $response['status']     = true;
-            
+
             $save['workflow_id']    = $request->workflow_id;
             $save['permission_id']  = $request->permission_id;
             $save['transition_id']  = $request->transition_id;
@@ -132,14 +178,53 @@ class VueGuardController extends Controller
             $save['label']          = $request->label;
 
             $this->vueGuard->create($save);
-        }  
+        }
 
         return response()->json($response);
     }
 
-    //[Function] destroy
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, $id){
+
+        $validator = Validator::make($request->all(),[
+            'workflow_id'   => 'required',
+            'permission_id' => 'required',
+            'transition_id' => 'required',
+            'name'          => 'required',
+            'label'         => 'required'
+        ]);
+
+        if($validator->fails()){
+            $response['message']    = 'add new guard failed';
+            $response['status']     = 'false';
+        }else{
+            $response['message']    = 'add guard success';
+            $response['status']     = true;
+
+            $save['workflow_id']    = $request->workflow_id;
+            $save['permission_id']  = $request->permission_id;
+            $save['transition_id']  = $request->transition_id;
+            $save['name']           = $this->macineName($request->name);
+            $save['label']          = $request->label;
+
+            $this->vueGuard->findOrFail($id)->update($save);
+        }
+
+        return response()->json($response);
+    }
+
+    /**
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
     public function destroy($id, Request $request){
-        
+
         $execute = $this->vueGuard->findOrFail($id);
 
         $response['status']     = true;
@@ -148,29 +233,29 @@ class VueGuardController extends Controller
 
         return response()->json($response);
     }
-    
-    //[Function] getTransition
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getTransition($id){
-        
+
         $transitions = $this->transition->where('workflow_id', $id)->get();
 
         return response()->json($transitions);
     }
-    
 
-    //[Function] macineName
+
+    /**
+     * @param $val
+     * @return mixed
+     */
     protected function macineName($val){
-        
+
         $first = strtolower($val);
-        $final = str_replace(' ', '-', $first);        
+        $final = str_replace(' ', '-', $first);
 
         return $final;
     }
-    
-    
-    
-    
-
-
 
 }
