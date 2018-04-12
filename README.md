@@ -84,6 +84,17 @@ $ php artisan migrate
               }
           },
           {
+          path: '/admin/workflow/guard/:id/edit',
+          components: {
+            main: resolve => require(['~/components/bantenprov/vue-guard/vue_guard.edit.vue'], resolve),
+            navbar: resolve => require(['~/components/Navbar.vue'], resolve),
+            sidebar: resolve => require(['~/components/Sidebar.vue'], resolve)
+          },
+          meta: {
+            title: "Guard"
+              }
+          },
+          {
           path: '/admin/workflow/guard/create',
           components: {
             main: resolve => require(['~/components/bantenprov/vue-guard/vue_guard.create.vue'], resolve),
