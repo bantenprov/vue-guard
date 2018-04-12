@@ -41,11 +41,9 @@
               <button class="btn btn-info btn-sm" role="button" @click="viewRow(props.rowData)">
                 <span class="fa fa-eye"></span>
               </button>
-              <!--
               <button class="btn btn-warning btn-sm" role="button" @click="editRow(props.rowData)">
                 <span class="fa fa-pencil"></span>
               </button>
-              -->
               <button class="btn btn-danger btn-sm" role="button" @click="deleteRow(props.rowData)">
                 <span class="fa fa-trash"></span>
               </button>
@@ -91,7 +89,7 @@ export default {
           title: '#',
           titleClass: 'center aligned',
           dataClass: 'right aligned'
-        },        
+        },
         {
           name: 'label',
           title: 'Label',
@@ -150,43 +148,43 @@ export default {
       }
     }
   },
-  methods: {  
+  methods: {
     toast_message(typem,title,message,event) {
       switch (typem) {
         case 'success':
           miniToastr.success(message, title);
           break;
         case 'error':
-          miniToastr.error(message, title);          
+          miniToastr.error(message, title);
           break;
         case 'info':
-          miniToastr.info(message, title);     
+          miniToastr.info(message, title);
           break;
-      }      
-    },              
-    createRow() {      
+      }
+    },
+    createRow() {
       window.location = '#/admin/workflow/guard/create';
     },
     viewRow(rowData) {
       window.location = '#/admin/workflow/guard/' + rowData.id + '/show';
     },
     editRow(rowData) {
-      window.location = '#/admin/workflow/transition/' + rowData.id + '/edit';
+      window.location = '#/admin/workflow/guard/' + rowData.id + '/edit';
     },
     deleteRow(rowData) {
-      
+
       let app = this;
       if (confirm('Do you really want to delete it?')) {
         axios.delete('/vue-guard/'+ rowData.id +'/destroy')
           .then(function(response) {
             if (response.data.status == true) {
               app.toast_message('success', 'success delete', response.data.message);
-              app.$refs.vuetable.reload();             
-            } else {              
+              app.$refs.vuetable.reload();
+            } else {
               app.toast_message('error', 'failed', 'failed delete');
             }
           })
-          .catch(function(response) {            
+          .catch(function(response) {
             app.toast_message('error', 'error', 'error #500');
           });
       }
