@@ -33,6 +33,6 @@ class CreateWorkflowGuardTable extends Migration
      */
     public function down()
     {
-        Schema::drop('worfklow_guards');
+        Schema::dropIfExists('worfklow_guards');
     }
 }
