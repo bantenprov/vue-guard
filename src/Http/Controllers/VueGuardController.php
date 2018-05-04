@@ -239,10 +239,14 @@ class VueGuardController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function getTransition($id){
-
-        $transitions = $this->transition->where('workflow_id', $id)->get();
-
-        return response()->json($transitions);
+        if($id == 'undefined'){
+            $transitions = [];
+            return response()->json($transitions);
+        }else{
+            $transitions = $this->transition->where('workflow_id', $id)->get();
+            return response()->json($transitions);
+        }
+        
     }
 
 
